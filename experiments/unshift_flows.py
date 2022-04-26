@@ -143,12 +143,8 @@ def main(defaults=None, stdev=0.5):
     free(optim, lr)
     
     # save the hyper parameter to tensorboard
-    model.writer.add_text("epochs : ", str(defaults['epochs']))
-    model.writer.add_text("n_batch : ", str(defaults['n_batch']))
-    model.writer.add_text("lr : ", str(defaults['lr']))
-    model.writer.add_text("gamma : ", str(defaults['gamma']))
-    model.writer.add_text("n_it : ", str(defaults['n_it']))
-    model.writer.add_text("stdec : ", str(defaults['stdev']))
+    for key, value in defaults.items():
+        model.writer.add_text(key , str(value))
 
     #save the hyper parameter in a json file
     with open('runs/json-'+name+day_number+"-"+number+'.json', 'w') as js:
