@@ -13,15 +13,6 @@ class Module (nn.Module):
         Overwrite `model.write` to log such values elsewhere. 
     """
     
-    @classmethod
-    def load(cls, path):
-        """ Load model from a state file. 
-
-            See model.save(path)
-        """
-        st = torch.load(path)
-        return cls(**st)
-    
     def loss_on (self, x, *ys):
         """ Model loss on input """
         if not "loss" in self.__dir__():
@@ -55,8 +46,3 @@ class Module (nn.Module):
         """ Write a scalar to tensorboard."""
         if 'writer' in self.__dir__() and self.writer:
             self.writer.add_scalar(name, data, global_step=nit)
-            
-    def save (self, path):
-        """ Save model data and state """
-        d = self.data | {"state": self.state_dict()}
-        torch.save(d, path)

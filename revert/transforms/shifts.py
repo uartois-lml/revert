@@ -10,10 +10,6 @@ def unshift(x, y):
         Output:
             - x_prime : x shifted by -y, channel wise
     """
-    dim = len(x.shape)
-    if dim == 2 :
-        x.unsqueeze_(0)
-    
     N = len(x)
     Nc = x.shape[1]
     Npts = x.shape[-1]
@@ -24,9 +20,6 @@ def unshift(x, y):
     idx = (idx + y_index[:,None]) % Npts
     idx = (torch.arange(Nc*N)[:,None] * Npts + idx).flatten()
     x_prime = x.flatten()[idx].view([N, Nc, Npts])
-    
-    if dim == 2 : 
-        return x_prime.squeeze(0)    
     return x_prime
 
 def shift_all(stdev):
@@ -41,11 +34,7 @@ def shift_all(stdev):
             - x_prime : the same list of channels (with all of them shifted)
             - y : list of all shift size for each channel
     """
-    def run_shift(x, y=None):
-        dim = len(x.shape)
-        if dim == 2 :
-            x.unsqueeze_(0)
-            
+    def run_shift(x):
         N = len(x)
         Nc = x.shape[1]
         Npts = x.shape[-1]
@@ -53,19 +42,15 @@ def shift_all(stdev):
         # generate and convert to tensor
         idx = torch.arange(Npts).repeat(Nc*N).view([Nc*N, Npts])
         # generate the guass distribution
-        if y is None :
-            y = torch.randn([N, Nc]) * stdev
-            y = mod(y, 1)
-            y = (y - y.mean([1])[:,None])
+        y = torch.randn([N, Nc]) * stdev
+        y = mod(y, 1)
+        y = (y - y.mean([1])[:,None])
         
         y_index = (y * (Npts / 2)).flatten().long() 
 
         idx = (idx + y_index[:,None]) % Npts
         idx = (torch.arange(Nc*N)[:,None] * Npts + idx).flatten()
         x_prime = x.flatten()[idx].view([N, Nc, Npts])
-        
-        if dim == 2 : 
-            return x_prime.squeeze(0), y
         return x_prime, y
     return run_shift
 
