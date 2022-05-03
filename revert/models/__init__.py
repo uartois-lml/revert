@@ -4,3 +4,4 @@ from .conv          import ConvNet
 from .module        import Module, Pipe
 from .geometry      import tsne, mdse, pca
 from .kmeans        import KMeans
+from .view          import View
