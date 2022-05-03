@@ -1,5 +1,5 @@
-from revert.models import ConvNet, Module, getModel, getData
-from revert.experemiments import arg_parse, arg_verifier
+from revert.models import ConvNet, Module
+from revert.experiments import arg_parse, arg_verifier, getModel, getData
 
 import json
 
