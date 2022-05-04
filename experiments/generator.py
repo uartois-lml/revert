@@ -1,5 +1,5 @@
 from revert.transforms import shift_all
-from revert.models import ConvNet, Module, Pipe, View
+from revert.models import ConvNet, Module, Pipe
 
 from torch.utils.data import TensorDataset, DataLoader
 
@@ -40,6 +40,5 @@ def getModel(Npts = 32) :
         return ((y - y_tgt)**2).sum()
     
     head.loss = lambda y, y_tgt : mse_loss(y, y_tgt)
-    view = View([1,dim_out,1])
     
-    return Pipe(base, view ,head)
+    return Pipe(base, head)
