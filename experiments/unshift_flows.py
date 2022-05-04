@@ -1,15 +1,11 @@
 from revert.models import ConvNet, Module
 from experiments import arg_parser, read_args, getModel, getData
 
-import json
-
 from torch.optim import SGD, Adam
 from torch.optim.lr_scheduler import ExponentialLR
 from torch.utils.tensorboard import SummaryWriter
 
 import torch
-
-# model state 
 
 #--- Main ---
 
@@ -34,8 +30,7 @@ def main(defaults=None, stdev=0.5):
     args = arg_parser(prefix = 'convnet')
     path = read_args(args, prefix = 'convnet')
         
-    print(model.modules)
-    #--- optimizer ---
+    # optimizer 
     optim = Adam(model.parameters(), lr=defaults['lr'])
     lr    = ExponentialLR(optim, gamma=defaults['gamma'])
         
@@ -49,9 +44,6 @@ def main(defaults=None, stdev=0.5):
         model.writer.add_text(key , str(value))
     
     #save the model
-    print(path.output)
-    print(model.modules[-1])
-    print(model.modules[-1].state_dict())
     model.save(path.output)
             
 #--- Cuda free ---
