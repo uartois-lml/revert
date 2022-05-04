@@ -1,5 +1,5 @@
 from revert.models import ConvNet, Module
-from revert.experiments import arg_parse, arg_verifier, getModel, getData
+from experiments import arg_parser, read_args, getModel, getData
 
 import json
 
@@ -31,15 +31,15 @@ def main(defaults=None, stdev=0.5):
     # generate the model
     model = getModel()
     # find the path to save 
-    args = arg_parse()
-    path, name = arg_verifier(args)
+    args = arg_parser(prefix = 'convnet')
+    path = read_args(args, prefix = 'convnet')
         
     print(model.modules)
     #--- optimizer ---
     optim = Adam(model.parameters(), lr=defaults['lr'])
     lr    = ExponentialLR(optim, gamma=defaults['gamma'])
         
-    model.writer = SummaryWriter(path + "runs/"+ name)
+    model.writer = SummaryWriter(path.writer)
     
     model.fit(dataLoad, optim, lr, epochs=defaults['epochs'], w="Loss")
     free(optim, lr)
@@ -47,13 +47,12 @@ def main(defaults=None, stdev=0.5):
     # save the hyper parameter to tensorboard
     for key, value in defaults.items():
         model.writer.add_text(key , str(value))
-
-    #save the hyper parameter in a json file
-    with open(path + "runs/"+ name, 'w') as js:
-        json.dump(defaults, js)
     
-    #save the head
-    model.modules[-1].save(path + "models/" + name)
+    #save the model
+    print(path.output)
+    print(model.modules[-1])
+    print(model.modules[-1].state_dict())
+    model.save(path.output)
             
 #--- Cuda free ---
 
